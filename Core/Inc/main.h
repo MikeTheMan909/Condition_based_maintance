@@ -57,36 +57,20 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define GYRO_ACC_INT_Pin GPIO_PIN_15
-#define GYRO_ACC_INT_GPIO_Port GPIOH
-#define SDCARD_DETECT_Pin GPIO_PIN_0
-#define SDCARD_DETECT_GPIO_Port GPIOI
-#define CAMERA_PLUG_Pin GPIO_PIN_10
-#define CAMERA_PLUG_GPIO_Port GPIOG
-#define CAMERA_XSDN_Pin GPIO_PIN_3
-#define CAMERA_XSDN_GPIO_Port GPIOI
-#define CAMERA_RSTI_Pin GPIO_PIN_2
-#define CAMERA_RSTI_GPIO_Port GPIOI
 #define USER_BUTTON_Pin GPIO_PIN_13
 #define USER_BUTTON_GPIO_Port GPIOC
-#define FMC_A22_LCD_RS_Pin GPIO_PIN_6
-#define FMC_A22_LCD_RS_GPIO_Port GPIOE
-#define UCPD_FLT_Pin GPIO_PIN_8
+#define VBUS_SENSE_Pin GPIO_PIN_2
+#define VBUS_SENSE_GPIO_Port GPIOC
+#define UCPD_FLT_Pin GPIO_PIN_14
 #define UCPD_FLT_GPIO_Port GPIOB
+#define LED_RED_Pin GPIO_PIN_2
+#define LED_RED_GPIO_Port GPIOG
 #define LED_GREEN_Pin GPIO_PIN_7
-#define LED_GREEN_GPIO_Port GPIOB
-#define LED_RED_Pin GPIO_PIN_7
-#define LED_RED_GPIO_Port GPIOH
-#define LCD_BL_CTRL_Pin GPIO_PIN_8
-#define LCD_BL_CTRL_GPIO_Port GPIOA
-#define IBUS_SENSE_Pin GPIO_PIN_0
-#define IBUS_SENSE_GPIO_Port GPIOA
-#define VBUS_SENSE_Pin GPIO_PIN_5
-#define VBUS_SENSE_GPIO_Port GPIOA
-#define MFX_IRQ_OUT_Pin GPIO_PIN_5
-#define MFX_IRQ_OUT_GPIO_Port GPIOC
-#define MFX_WAKEUP_Pin GPIO_PIN_11
-#define MFX_WAKEUP_GPIO_Port GPIOF
+#define LED_GREEN_GPIO_Port GPIOC
+#define UCPD_DBn_Pin GPIO_PIN_5
+#define UCPD_DBn_GPIO_Port GPIOB
+#define LED_BLUE_Pin GPIO_PIN_7
+#define LED_BLUE_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
