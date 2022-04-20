@@ -1,0 +1,4 @@
+../Lib/SPSGRF/SPSGRF.c:25:6:SPSGRF_Init	168	static
+../Lib/SPSGRF/SPSGRF.c:154:6:SPSGRF_StartTx	16	static
+../Lib/SPSGRF/SPSGRF.c:175:6:SPSGRF_StartRx	8	static
+../Lib/SPSGRF/SPSGRF.c:186:9:SPSGRF_GetRxData	24	static

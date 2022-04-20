@@ -85,6 +85,8 @@ enum states{
 	INTERRUPT,
 	IDLE
 };
+extern volatile int state;
+extern int check;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

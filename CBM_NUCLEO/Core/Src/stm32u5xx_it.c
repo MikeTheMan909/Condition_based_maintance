@@ -22,6 +22,7 @@
 #include "stm32u5xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "spsgrf.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,8 +56,9 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim17;
-
+extern SpiritIrqs irqStatus;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -202,16 +204,31 @@ void SysTick_Handler(void)
 /**
   * @brief This function handles EXTI Line12 interrupt.
   */
-extern volatile int state;
 void EXTI12_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI7_IRQn 0 */
-  state = 3;
-  /* USER CODE END EXTI7_IRQn 0 */
+  /* USER CODE BEGIN EXTI12_IRQn 0 */
+  SpiritIrqGetStatus(&irqStatus);
+  SpiritIrqClearStatus();
+  state = 2;
+  /* USER CODE END EXTI12_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(SPIRIT1_GPIO3_Pin);
-  /* USER CODE BEGIN EXTI7_IRQn 1 */
+  /* USER CODE BEGIN EXTI12_IRQn 1 */
 
-  /* USER CODE END EXTI7_IRQn 1 */
+  /* USER CODE END EXTI12_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM4 global interrupt.
+  */
+void TIM4_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM4_IRQn 0 */
+	check = 1;
+  /* USER CODE END TIM4_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim4);
+  /* USER CODE BEGIN TIM4_IRQn 1 */
+
+  /* USER CODE END TIM4_IRQn 1 */
 }
 
 /**

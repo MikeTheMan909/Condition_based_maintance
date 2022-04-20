@@ -25,6 +25,7 @@
 #include "string.h"
 #include "debug.h"
 #include "comm.h"
+#include "config.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,8 +52,8 @@ UART_HandleTypeDef huart1;
 const char *module = "main";
 #define main_print_debug(str) print_debug(module, str);
 
-enum states state = RECEIVE;
-uint8_t receive = 1;
+enum states state = SEND;
+uint8_t receive = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,6 +101,7 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_USART1_UART_Init();
+  c.send_flag = config();
   /* USER CODE BEGIN 2 */
   main_print_debug("****************PROGRAM STARTED******************");
   main_print_debug("Peripherals initialized!");
@@ -107,7 +109,7 @@ int main(void)
   main_print_debug("SPSGRF initialized!");
   char test2[20];
   uint8_t rxdata[20];
-  SpiritIrqs irqStatus;
+  uint8_t temp_val[20];
   int i = 0;
   /* USER CODE END 2 */
 
@@ -119,7 +121,7 @@ int main(void)
 	  switch(state){
 	  case SEND:
 		  main_print_debug("Data send request");
-		  comm_request(test2);
+		  comm_request(3.4,2,7,8);
 		  HAL_Delay(20);
 		  state = IDLE;
 		  break;
@@ -127,42 +129,6 @@ int main(void)
 		  main_print_debug("Starting RX state");
 		  SPSGRF_StartRx();
 		  state = IDLE;
-		  break;
-	  case INTERRUPT:
-		  main_print_debug("Got interrupted");
-		  SpiritIrqGetStatus(&irqStatus);
-		  SpiritIrqClearStatus();
-		  if(irqStatus.IRQ_RX_DATA_READY)
-		  {
-			  main_print_debug("data received");
-			  SPSGRF_GetRxData(rxdata);
-			  main_print_debug("data:");
-			  main_print_debug((char *)rxdata);
-			  // do something...
-			  state = IDLE;
-		  }
-		  if(irqStatus.IRQ_RX_DATA_DISC)
-		  {
-			  // do something...
-			  state = IDLE;
-		  }
-		  if(irqStatus.IRQ_TX_DATA_SENT)
-		  {
-			  main_print_debug("Data send!");
-			  // do something...
-			  state = IDLE;
-			  break;
-		  }
-		  if(irqStatus.IRQ_RX_TIMEOUT)
-		  {
-			  // do something...
-			  state = IDLE;
-		  }
-		  if(receive){
-			  state = RECEIVE;
-		  }else{
-			  state = IDLE;
-		  }
 		  break;
 	  case IDLE:
 		  if(HAL_GPIO_ReadPin(GPIOC, USER_Button_Pin)){

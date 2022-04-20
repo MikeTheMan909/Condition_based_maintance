@@ -1,1 +1,2 @@
-comm.c:9:6:comm_request	16	static
+../lib/comm/comm.c:10:6:comm_request	80	static
+../lib/comm/comm.c:30:6:comm_request_big	136	static

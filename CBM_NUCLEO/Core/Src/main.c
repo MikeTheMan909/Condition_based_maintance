@@ -23,11 +23,12 @@
 /* USER CODE BEGIN Includes */
 #include "SPIRIT_Config.h"
 #include "spsgrf.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-volatile int state = 0;
+volatile int state = 1;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -43,6 +44,8 @@ volatile int state = 0;
 
 SPI_HandleTypeDef hspi1;
 
+TIM_HandleTypeDef htim4;
+
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
@@ -54,13 +57,21 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_TIM4_Init(void);
 /* USER CODE BEGIN PFP */
+int check = 0;
 
+union convert {
+	float t;
+	uint8_t b[4];
+};
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t recievedbuf[100];
+uint8_t rec[100];
+SpiritIrqs irqStatus;
 /* USER CODE END 0 */
 
 /**
@@ -76,7 +87,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-   HAL_Init();
+  HAL_Init();
   HAL_PWREx_EnableVddIO2();
 
   /* USER CODE BEGIN Init */
@@ -94,21 +105,32 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_SPI1_Init();
+  //MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
+
   HAL_UART_Transmit(&huart1, (uint8_t *)"program started\n\r", sizeof("program started\n\r"), 1000);
   SPSGRF_Init();
   HAL_UART_Transmit(&huart1, (uint8_t *)"SPSGRF module initialized\n\r", sizeof("SPSGRF module initialized\n\r"), 1000);
+  HAL_TIM_Base_Start_IT(&htim4);
+  uint8_t key[] = "HALLO_adwFegadwa";
+  SpiritAesWriteKey(key);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint8_t test[] = "hello world!";
-  SpiritIrqs irqStatus;
+  int i =0;
+  //uint8_t test[] = "hello world!";
+  uint8_t test2[28];
+  char tmp[50];
+  uint16_t tempvalue;
+
+  union convert f;
   while (1)
   {
 	  switch(state){
 	  	  case 0:
-	  		  SPSGRF_StartTx((uint8_t *)test,sizeof(test));
+	  		  SPSGRF_StartTx((uint8_t *)test2,(strlen(test2)));
+	  		  HAL_UART_Transmit(&huart1, (uint8_t *)"Data send\n\r", sizeof("Data send\n\r"), 1000);
 	  		  HAL_Delay(10);
 	  		  state = 3;
 	  		  break;
@@ -118,20 +140,49 @@ int main(void)
 	  		  state = 3;
 	  		  break;
 	  	  case 2:
-	  		  SpiritIrqGetStatus(&irqStatus);
-	  		  SpiritIrqClearStatus();
+
 	  		  if(irqStatus.IRQ_RX_DATA_READY)
 	  		  {
+	  			  memset(&tmp, 0, 50);
 	  			  // do something...
-	  			HAL_UART_Transmit(&huart1, (uint8_t *)"Data received\n\r", sizeof("Data received\n\r"), 1000);
-	  			  SPSGRF_GetRxData(recievedbuf);
+	  			  HAL_UART_Transmit(&huart1, (uint8_t *)"Data received\n\r", sizeof("Data received\n\r"), 1000);
+	  			  SPSGRF_GetRxData(rec);
+
+	  			  SpiritAesWriteDataIn(rec, 16);
+				  SpiritAesDeriveDecKeyExecuteDec();
+				  while(!irqStatus.IRQ_AES_END);
+				  HAL_UART_Transmit(&huart1, (uint8_t *)"Decryption done!\n\r", sizeof("Decryption done!\n\r"), 1000);
+				  SpiritAesReadDataOut(recievedbuf , 12);
+
 	  			  HAL_Delay(20);
-	  			  HAL_UART_Transmit(&huart1, recievedbuf, sizeof(recievedbuf), 1000);
-	  			HAL_UART_Transmit(&huart1, (uint8_t *)"\n\r", sizeof("\n\r"), 1000);
+	  			  sprintf(tmp, "Device id: %d \n\r", recievedbuf[0]);
+	  			  HAL_UART_Transmit(&huart1,(uint8_t *) tmp, strlen(tmp), 100);
+
+	  			  sprintf(tmp, "send flag: %d \n\r", recievedbuf[1]);
+	  			  HAL_UART_Transmit(&huart1,(uint8_t *) tmp, strlen(tmp), 100);
+
+	  			  memcpy(&f.b, &recievedbuf[2], 4);
+	  			  sprintf(tmp, "temperature: %f\n\r", f.t);
+	  			  HAL_UART_Transmit(&huart1,(uint8_t *) tmp, strlen(tmp), 100);
+
+	  			  memcpy(&tempvalue, &recievedbuf[6],2);
+				  sprintf(tmp, "x value: %d\n\r", tempvalue);
+				  HAL_UART_Transmit(&huart1,(uint8_t *) tmp, strlen(tmp), 100);
+
+				  memcpy(&tempvalue, &recievedbuf[8],2);
+				  sprintf(tmp, "y value: %d\n\r", tempvalue);
+				  HAL_UART_Transmit(&huart1,(uint8_t *) tmp, strlen(tmp), 100);
+
+				  memcpy(&tempvalue, &recievedbuf[10],2);
+				  sprintf(tmp, "z value: %d\n\r", tempvalue);
+				  HAL_UART_Transmit(&huart1,(uint8_t *) tmp, strlen(tmp), 100);
+
+	  			  HAL_UART_Transmit(&huart1, (uint8_t *)"\n\r", strlen("\n\r"), 1000);
 	  			  state = 3;
 	  		  }
 	  		  if(irqStatus.IRQ_RX_DATA_DISC)
 	  		  {
+	  			  HAL_UART_Transmit(&huart1, (uint8_t *)"Data discarded\n\r", sizeof("Data discarded\n\r"), 1000);
 	  			  // do something...
 	  			  state = 3;
 	  		  }
@@ -141,8 +192,9 @@ int main(void)
 	  			  state = 3;
 	  			  break;
 	  		  }
-	  		  if(irqStatus.IRQ_RX_TIMEOUT)
+	  		  if(irqStatus.IRQ_AES_END)
 	  		  {
+
 	  			  // do something...
 	  			  state = 3;
 	  		  }
@@ -150,13 +202,20 @@ int main(void)
 	  		  break;
 	  	  case 3:
 	  		  HAL_Delay(1);
-	  		  if(HAL_GPIO_ReadPin(GPIOC, USER_BUTTON_Pin)){
+	  		  if(HAL_GPIO_ReadPin(GPIOC, USER_BUTTON_Pin) || check == 1)
+	  		  {
 	  			  state = 0;
+	  			  sprintf(test2, "hello world! times send:%d", i);
+	  			  i++;
+	  			  HAL_Delay(200);
+	  			  check = 0;
 	  		  }
 	  		  break;
 	  	  }
 
-	      /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
@@ -261,6 +320,51 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
+  * @brief TIM4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM4_Init(void)
+{
+
+  /* USER CODE BEGIN TIM4_Init 0 */
+
+  /* USER CODE END TIM4_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM4_Init 1 */
+
+  /* USER CODE END TIM4_Init 1 */
+  htim4.Instance = TIM4;
+  htim4.Init.Prescaler = 10;
+  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim4.Init.Period = 4000000;
+  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM4_Init 2 */
+
+  /* USER CODE END TIM4_Init 2 */
 
 }
 

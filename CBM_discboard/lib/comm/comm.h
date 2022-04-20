@@ -10,6 +10,13 @@
 
 #include "spsgrf.h"
 #include "debug.h"
-void comm_request(char *data);
+#include "string.h"
+#include "stdio.h"
+#include "main.h"
 
+union convert {
+	float t;
+	uint8_t b[4];
+};
+void comm_request(float temperature, uint16_t X,uint16_t Y,uint16_t Z);
 #endif /* COMM_COMM_H_ */

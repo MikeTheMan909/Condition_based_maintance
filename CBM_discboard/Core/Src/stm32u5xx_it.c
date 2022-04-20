@@ -204,8 +204,7 @@ void SysTick_Handler(void)
 
 void EXTI7_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI7_IRQn 0 */
-  state = INTERRUPT;
+	/* USER CODE BEGIN EXTI7_IRQn 0 */
   /* USER CODE END EXTI7_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(OCTOSPI_R_IO7_Pin);
   /* USER CODE BEGIN EXTI7_IRQn 1 */

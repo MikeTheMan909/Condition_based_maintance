@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (9-2020-q2-update)
+# Toolchain: GNU Tools for STM32 (10.3-2021.10)
 ################################################################################
 
 -include ../makefile.init
@@ -12,6 +12,7 @@ RM := rm -rf
 -include lib/spsgrf/subdir.mk
 -include lib/debug/subdir.mk
 -include lib/comm/subdir.mk
+-include lib/cbm/subdir.mk
 -include Drivers/STM32U5xx_HAL_Driver/Src/subdir.mk
 -include Drivers/SPIRIT1_Library/Src/subdir.mk
 -include Drivers/SPIRIT1_Library/subdir.mk
@@ -48,14 +49,14 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 EXECUTABLES += \
 CBM_discboard.elf \
 
+MAP_FILES += \
+CBM_discboard.map \
+
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
 CBM_discboard.list \
-
-OBJCOPY_BIN += \
-CBM_discboard.bin \
 
 
 # All Target
@@ -65,7 +66,7 @@ all: main-build
 main-build: CBM_discboard.elf secondary-outputs
 
 # Tool invocations
-CBM_discboard.elf: $(OBJS) $(USER_OBJS) D:\Quest_workspace\CBM\CBM_discboard\STM32U585AIIXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+CBM_discboard.elf CBM_discboard.map: $(OBJS) $(USER_OBJS) D:\Quest_workspace\CBM\CBM_discboard\STM32U585AIIXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	arm-none-eabi-gcc -o "CBM_discboard.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"D:\Quest_workspace\CBM\CBM_discboard\STM32U585AIIXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="CBM_discboard.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
@@ -80,17 +81,12 @@ CBM_discboard.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-CBM_discboard.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "CBM_discboard.bin"
-	@echo 'Finished building: $@'
-	@echo ' '
-
 # Other Targets
 clean:
-	-$(RM) CBM_discboard.bin CBM_discboard.elf CBM_discboard.list default.size.stdout
+	-$(RM) CBM_discboard.elf CBM_discboard.list CBM_discboard.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'

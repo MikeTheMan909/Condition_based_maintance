@@ -153,6 +153,7 @@ void SPSGRF_Init(void)
 void SPSGRF_StartTx(uint8_t *txBuff, uint8_t txLen)
 {
   // flush the TX FIFO
+  SpiritPktBasicSetDestinationAddress(0x66);
   SpiritCmdStrobeFlushTxFifo();
 
   // Avoid TX FIFO overflow

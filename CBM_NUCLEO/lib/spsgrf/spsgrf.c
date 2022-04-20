@@ -11,6 +11,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "spsgrf.h"
 
+#ifdef ENABLE_DEBUG
+#define SPSGRF_DEBUG 0
+#endif
+
+const char *spsgrfmod = "SPSGRF";
+#define spsgrf_print_debug(str) print_debug(spsgrfmod, str)
 
 /* External functions --------------------------------------------------------*/
 /**
@@ -28,6 +34,9 @@ void SPSGRF_Init(void)
   SpiritSpiInit();
 
   // restart the radio
+#ifdef SPSGRF_DEBUG
+  spsgrf_print_debug("Booting module");
+#endif
   SpiritEnterShutdown();
   SpiritExitShutdown();
   SpiritManagementWaExtraCurrent(); // To be called at the SHUTDOWN exit. It avoids extra current consumption at SLEEP and STANDBY.
@@ -39,6 +48,14 @@ void SPSGRF_Init(void)
     SpiritRefreshStatus(); // reads the MC_STATUS register
   } while (g_xStatus.MC_STATE != MC_STATE_READY);
 
+#ifdef SPSGRF_DEBUG
+  spsgrf_print_debug("Initialize radio RF parameters");
+  char tmp[100];
+  sprintf(tmp, "Setting frequency to %f",BASE_FREQUENCY);
+  spsgrf_print_debug(tmp);
+  sprintf(tmp, "Setting baudrate to %d",DATARATE);
+  spsgrf_print_debug(tmp);
+#endif
   // Initialize radio RF parameters
   xRadioInit.nXtalOffsetPpm = XTAL_OFFSET_PPM;
   xRadioInit.lFrequencyBase = BASE_FREQUENCY;
@@ -50,11 +67,15 @@ void SPSGRF_Init(void)
   xRadioInit.lBandwidth = BANDWIDTH;
   SpiritRadioSetXtalFrequency(XTAL_FREQUENCY); // Must be called before SpiritRadioInit()
   SpiritRadioInit(&xRadioInit);
-
+#ifdef SPSGRF_DEBUG
+  spsgrf_print_debug("Setting power level");
+#endif
   // Set the transmitter power level
   SpiritRadioSetPALeveldBm(POWER_INDEX, POWER_DBM);
   SpiritRadioSetPALevelMaxIndex(POWER_INDEX);
-
+#ifdef SPSGRF_DEBUG
+  spsgrf_print_debug("Configure packet handler to use the Basic packet format");
+#endif
   // Configure packet handler to use the Basic packet format
   xBasicInit.xPreambleLength = PREAMBLE_LENGTH;
   xBasicInit.xSyncLength = SYNC_LENGTH;
@@ -67,7 +88,9 @@ void SPSGRF_Init(void)
   xBasicInit.xFec = EN_FEC;
   xBasicInit.xDataWhitening = EN_WHITENING;
   SpiritPktBasicInit(&xBasicInit);
-
+#ifdef SPSGRF_DEBUG
+  spsgrf_print_debug("Configuring automatic packet filtering");
+#endif
   // Configure destination address criteria for automatic packet filtering
   xBasicAddress.xFilterOnMyAddress = EN_FILT_MY_ADDRESS;
   xBasicAddress.cMyAddress = MY_ADDRESS;
@@ -76,19 +99,23 @@ void SPSGRF_Init(void)
   xBasicAddress.xFilterOnBroadcastAddress = EN_FILT_BROADCAST_ADDRESS;
   xBasicAddress.cBroadcastAddress = BROADCAST_ADDRESS;
   SpiritPktBasicAddressesInit(&xBasicAddress);
-
+#ifdef SPSGRF_DEBUG
+  spsgrf_print_debug("Configuring interrupt pin");
+#endif
   // Configure GPIO3 as interrupt request pin (active low)
   xGpioInit.xSpiritGpioPin = SPIRIT_GPIO_3;
   xGpioInit.xSpiritGpioMode = SPIRIT_GPIO_MODE_DIGITAL_OUTPUT_LP;
   xGpioInit.xSpiritGpioIO = SPIRIT_GPIO_DIG_OUT_IRQ;
   SpiritGpioInit(&xGpioInit);
-
+#ifdef SPSGRF_DEBUG
+  spsgrf_print_debug("Enable interrupt types");
+#endif
   // Generate an interrupt request for the following IRQs
   SpiritIrqDeInit(NULL);
   SpiritIrq(TX_DATA_SENT, S_ENABLE);
   SpiritIrq(RX_DATA_READY, S_ENABLE);
   SpiritIrq(RX_DATA_DISC, S_ENABLE);
-  SpiritIrq(RX_TIMEOUT, S_ENABLE);
+  SpiritIrq(AES_END, S_ENABLE);
   SpiritIrqClearStatus();
 
   // Enable the synchronization quality indicator check (perfect match required)
@@ -96,14 +123,22 @@ void SPSGRF_Init(void)
   SpiritQiSetSqiThreshold(SQI_TH_0);
   SpiritQiSqiCheck(S_ENABLE);
 
+  SpiritAesMode(S_ENABLE);
+
   // Set the RSSI Threshold for Carrier Sense (9.10.2)
   // NOTE: CS_MODE = 0 at reset
   SpiritQiSetRssiThresholddBm(RSSI_THRESHOLD);
 
   // Configure the RX timeout
 #ifdef RECEIVE_TIMEOUT
+#ifdef SPSGRF_DEBUG
+  spsgrf_print_debug("Set RX timeout to 2000");
+#endif
   SpiritTimerSetRxTimeoutMs(2000.0);
 #else
+#ifdef SPSGRF_DEBUG
+  spsgrf_print_debug("Set RX timeout to infinite");
+#endif
   SET_INFINITE_RX_TIMEOUT();
 #endif /* RECIEVE_TIMEOUT */
   SpiritTimerSetRxTimeoutStopCondition(SQI_ABOVE_THRESHOLD);
@@ -119,6 +154,7 @@ void SPSGRF_Init(void)
 */
 void SPSGRF_StartTx(uint8_t *txBuff, uint8_t txLen)
 {
+  SpiritPktBasicSetDestinationAddress(0xAA);
   // flush the TX FIFO
   SpiritCmdStrobeFlushTxFifo();
 

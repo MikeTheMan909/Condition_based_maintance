@@ -1,0 +1,4 @@
+../Lib/Comm/comm.c:10:6:comm_request	80	static
+../Lib/Comm/comm.c:36:6:comm_request_big	136	static
+../Lib/Comm/comm.c:67:6:comm_received	80	static
+../Lib/Comm/comm.c:95:6:comm_send	16	static

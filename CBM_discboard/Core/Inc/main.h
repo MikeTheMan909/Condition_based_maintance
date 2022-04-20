@@ -192,11 +192,11 @@ void Error_Handler(void);
 enum states {
 	SEND,
 	RECEIVE,
-	INTERRUPT,
 	IDLE
 };
 extern enum states state;
 extern UART_HandleTypeDef huart1;
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
@@ -204,3 +204,5 @@ extern UART_HandleTypeDef huart1;
 #endif
 
 #endif /* __MAIN_H */
+
+

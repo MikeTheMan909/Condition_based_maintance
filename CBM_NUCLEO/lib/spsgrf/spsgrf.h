@@ -14,7 +14,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "SPIRIT_Config.h"
 
-
 /* Exported constants --------------------------------------------------------*/
 #define XTAL_FREQUENCY              50000000
 
@@ -51,9 +50,9 @@
 #define EN_FILT_MY_ADDRESS          S_DISABLE
 #define EN_FILT_MULTICAST_ADDRESS   S_DISABLE
 #define EN_FILT_BROADCAST_ADDRESS   S_DISABLE
-#define MY_ADDRESS                  0x44
-#define MULTICAST_ADDRESS           0xEE
-#define BROADCAST_ADDRESS           0xFF
+#define MY_ADDRESS                  0x66
+#define MULTICAST_ADDRESS           0x66
+#define BROADCAST_ADDRESS           0x66
 
 #define MAX_BUFFER_LEN              96
 #define MAX_PAYLOAD_LEN             126 // (2^7 - 1) - 1 - 0 = 126 (LENGTH_WID=7, 1 address byte, & 0 control bytes)

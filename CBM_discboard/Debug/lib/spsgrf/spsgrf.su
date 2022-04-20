@@ -1,4 +1,4 @@
-spsgrf.c:26:6:SPSGRF_Init	168	static
-spsgrf.c:153:6:SPSGRF_StartTx	16	static
-spsgrf.c:173:6:SPSGRF_StartRx	8	static
-spsgrf.c:184:9:SPSGRF_GetRxData	24	static
+../lib/spsgrf/spsgrf.c:26:6:SPSGRF_Init	168	static
+../lib/spsgrf/spsgrf.c:153:6:SPSGRF_StartTx	16	static
+../lib/spsgrf/spsgrf.c:174:6:SPSGRF_StartRx	8	static
+../lib/spsgrf/spsgrf.c:185:9:SPSGRF_GetRxData	24	static
