@@ -32,10 +32,8 @@ uint8_t message_send = 0;
 void comm_builddata(uint8_t *temp, float *value, uint8_t placement){
 	union convert f;
 	f.t = *value;
-	printf("%f",*value);
 	int i = 0;
 	for(i=0; i<4; i++){
-		printf("%02x ",f.b[i]);
 		temp[placement + i] = f.b[i];
 	}
 }
