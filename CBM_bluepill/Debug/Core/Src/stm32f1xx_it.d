@@ -25,7 +25,6 @@ Core/Src/stm32f1xx_it.o: ../Core/Src/stm32f1xx_it.c ../Core/Inc/main.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
- ../Core/Inc/stm32f1xx_it.h \
  D:/Quest_workspace/CBM/CBM_bluepill/Lib/SPSGRF/SPSGRF.h \
  D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/SPIRIT_Config.h \
  D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/SPIRIT_Regs.h \
@@ -49,7 +48,12 @@ Core/Src/stm32f1xx_it.o: ../Core/Src/stm32f1xx_it.c ../Core/Inc/main.h \
  D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/SPIRIT_Config.h \
  D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/MCU_Interface.h \
  D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/SPIRIT_Management.h \
- D:/Quest_workspace/CBM/CBM_bluepill/Lib/Debug/debug.h
+ D:/Quest_workspace/CBM/CBM_bluepill/Lib/Debug/debug.h \
+ D:/Quest_workspace/CBM/CBM_bluepill/Lib/Comm/comm.h \
+ D:/Quest_workspace/CBM/CBM_bluepill/Lib/SPSGRF/spsgrf.h \
+ D:/Quest_workspace/CBM/CBM_bluepill/Lib/Cbm/config.h \
+ D:/Quest_workspace/CBM/CBM_bluepill/Lib/Mesh/mesh.h \
+ ../Core/Inc/stm32f1xx_it.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -77,7 +81,6 @@ Core/Src/stm32f1xx_it.o: ../Core/Src/stm32f1xx_it.c ../Core/Inc/main.h \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
-../Core/Inc/stm32f1xx_it.h:
 D:/Quest_workspace/CBM/CBM_bluepill/Lib/SPSGRF/SPSGRF.h:
 D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/SPIRIT_Config.h:
 D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/SPIRIT_Regs.h:
@@ -102,3 +105,8 @@ D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/SPIRIT_C
 D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/MCU_Interface.h:
 D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/SPIRIT_Management.h:
 D:/Quest_workspace/CBM/CBM_bluepill/Lib/Debug/debug.h:
+D:/Quest_workspace/CBM/CBM_bluepill/Lib/Comm/comm.h:
+D:/Quest_workspace/CBM/CBM_bluepill/Lib/SPSGRF/spsgrf.h:
+D:/Quest_workspace/CBM/CBM_bluepill/Lib/Cbm/config.h:
+D:/Quest_workspace/CBM/CBM_bluepill/Lib/Mesh/mesh.h:
+../Core/Inc/stm32f1xx_it.h:

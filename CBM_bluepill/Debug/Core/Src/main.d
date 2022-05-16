@@ -51,7 +51,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  D:/Quest_workspace/CBM/CBM_bluepill/Lib/Debug/debug.h \
  D:/Quest_workspace/CBM/CBM_bluepill/Lib/Comm/comm.h \
  D:/Quest_workspace/CBM/CBM_bluepill/Lib/SPSGRF/spsgrf.h \
- D:/Quest_workspace/CBM/CBM_bluepill/Lib/Cbm/config.h
+ D:/Quest_workspace/CBM/CBM_bluepill/Lib/Cbm/config.h \
+ D:/Quest_workspace/CBM/CBM_bluepill/Lib/Mesh/mesh.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h:
 ../Core/Inc/stm32f1xx_hal_conf.h:
@@ -106,3 +107,4 @@ D:/Quest_workspace/CBM/CBM_bluepill/Lib/Debug/debug.h:
 D:/Quest_workspace/CBM/CBM_bluepill/Lib/Comm/comm.h:
 D:/Quest_workspace/CBM/CBM_bluepill/Lib/SPSGRF/spsgrf.h:
 D:/Quest_workspace/CBM/CBM_bluepill/Lib/Cbm/config.h:
+D:/Quest_workspace/CBM/CBM_bluepill/Lib/Mesh/mesh.h:

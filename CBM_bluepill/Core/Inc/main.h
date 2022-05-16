@@ -31,7 +31,13 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "SPSGRF/SPSGRF.h"
+#include "string.h"
+#include "stdio.h"
+#include "Debug/debug.h"
+#include "Comm/comm.h"
+#include "Cbm/config.h"
+#include "Mesh/mesh.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -41,7 +47,9 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+extern SpiritIrqs irqStatus;
+extern TIM_HandleTypeDef htim2;
+extern struct sensor_values sensor_value;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -77,6 +85,7 @@ enum states {
 };
 extern enum states state;
 extern UART_HandleTypeDef huart1;
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

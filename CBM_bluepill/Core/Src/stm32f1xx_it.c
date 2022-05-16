@@ -43,7 +43,7 @@
 /* USER CODE BEGIN PV */
 extern uint8_t interrupt_flag;
 extern enum states state;
-extern SpiritIrqs irqStatus;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

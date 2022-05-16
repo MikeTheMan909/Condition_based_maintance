@@ -49,7 +49,10 @@ Lib/Comm/comm.o: ../Lib/Comm/comm.c ../Lib/Comm/comm.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h \
- ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
+ ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h \
+ D:/Quest_workspace/CBM/CBM_bluepill/Lib/SPSGRF/SPSGRF.h \
+ D:/Quest_workspace/CBM/CBM_bluepill/Lib/Comm/comm.h \
+ D:/Quest_workspace/CBM/CBM_bluepill/Lib/Mesh/mesh.h
 ../Lib/Comm/comm.h:
 D:/Quest_workspace/CBM/CBM_bluepill/Lib/SPSGRF/spsgrf.h:
 D:/Quest_workspace/CBM/CBM_bluepill/Drivers/SPIRIT1/SPIRIT1_Library/Inc/SPIRIT_Config.h:
@@ -103,3 +106,6 @@ D:/Quest_workspace/CBM/CBM_bluepill/Lib/Cbm/config.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h:
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h:
+D:/Quest_workspace/CBM/CBM_bluepill/Lib/SPSGRF/SPSGRF.h:
+D:/Quest_workspace/CBM/CBM_bluepill/Lib/Comm/comm.h:
+D:/Quest_workspace/CBM/CBM_bluepill/Lib/Mesh/mesh.h:

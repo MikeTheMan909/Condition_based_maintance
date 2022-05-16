@@ -21,12 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "SPSGRF/SPSGRF.h"
-#include "string.h"
-#include "stdio.h"
-#include "Debug/debug.h"
-#include "Comm/comm.h"
-#include "Cbm/config.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,7 +39,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- SPI_HandleTypeDef hspi1;
+SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim2;
 
@@ -58,7 +53,10 @@ enum states state = RECEIVE;
 uint8_t interrupt_flag = 0;
 
 struct config c;
+struct nodes_info nodes;
+SpiritIrqs irqStatus;
 
+uint8_t last_message[50];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -73,7 +71,7 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-SpiritIrqs irqStatus;
+
 /* USER CODE END 0 */
 
 /**
@@ -108,23 +106,30 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  c = config();
+
   main_print_debug("****************PROGRAM STARTED******************");
   main_print_debug("Peripherals initialized!");
-  SPSGRF_Init();
-  main_print_debug("SPSGRF initialized!");
-  if(state == PREP_DATA){
-	  HAL_TIM_Base_Start_IT(&htim2);
-  }
-  uint8_t rxdata[20];
+  comm_start();
 
-  c.send_flag = config();
-  memcpy(c.key,"HALLO_adwFegadwa", 16);
-  SpiritAesWriteKey(c.key);
-  uint8_t data[50];
+  main_print_debug("SPSGRF initialized!");
+
+  uint8_t data[200];
   uint8_t enc_data[16];
   uint8_t dec_data[12];
-  char temp[50];
-  char str[50];
+  uint8_t len;
+
+  struct sensor_values sensor_value;
+  sensor_value.temperature = 21.32;
+  sensor_value.acc.x.rms = 21.32;
+  sensor_value.acc.x.peak = 11.23;
+  sensor_value.acc.x.crest = 8.1;
+  sensor_value.acc.y.rms = 21.324;
+  sensor_value.acc.y.peak = 11.234;
+  sensor_value.acc.y.crest = 8.13;
+  sensor_value.acc.z.rms = 21.327;
+  sensor_value.acc.z.peak = 11.231;
+  sensor_value.acc.z.crest = 8.12;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -135,54 +140,15 @@ int main(void)
 	  switch(state){
 	  case PREP_DATA:
 		  main_print_debug("Data send request");
-		  comm_request(data,1,1,2,3);
+		  len = comm_request(data,sensor_value);
 		  state = ENCRYPT;
 		  break;
 	  case ENCRYPT:
-#ifdef DEBUG_ENCRYPTION
-		  memset(temp,0, 50);
-		  strcpy(temp, "data:");
-		  for(int i = 0; i<12; i++){
-			sprintf(str,"%X", data[i]);
-			strcat(temp,str);
-		  }
-		  main_print_debug(temp);
-#endif
-		  SpiritAesWriteDataIn(data , 12);
-		  SpiritAesExecuteEncryption();
-		  while(!irqStatus.IRQ_AES_END);
-		  SpiritAesReadDataOut(enc_data , 16);
-#ifdef DEBUG_ENCRYPTION
-		  memset(temp,0, 50);
-		  strcpy(temp, "data:");
-		  for(int i = 0; i<16; i++){
-			  sprintf(str,"%X", enc_data[i]);
-			  strcat(temp,str);
-		  }
-		  main_print_debug(temp);
-#endif
+		  comm_encrypt(data, len, enc_data);
 		  state = SEND;
 		  break;
-	  case DECRYPT:
-		  SpiritAesWriteDataIn(rxdata, 16);
-		  SpiritAesDeriveDecKeyExecuteDec();
-		  while(!irqStatus.IRQ_AES_END);
-
-		  SpiritAesReadDataOut(dec_data , 12);
-#ifdef DEBUG_ENCRYPTION
-		  memset(temp,0, 50);
-		  strcpy(temp, "data:");
-		  for(int i = 0; i<12; i++){
-		  			  sprintf(str,"%X", dec_data[i]);
-		  			  strcat(temp,str);
-		  		  }
-		  main_print_debug(temp);
-#endif
-		  comm_received(dec_data);
-		  state = RECEIVE;
-		  break;
 	  case SEND:
-		  SPSGRF_StartTx(enc_data,16);
+		  comm_send(enc_data);
 		  state = IDLE;
 		  break;
 	  case RECEIVE:
@@ -190,6 +156,12 @@ int main(void)
 		  SPSGRF_StartRx();
 		  state = IDLE;
 		  break;
+	  case DECRYPT:
+		  comm_decrypt(dec_data);
+		  comm_received(dec_data);
+		  state = RECEIVE;
+		  break;
+
 	  case IDLE:
 		  if(interrupt_flag == 1){
 			main_print_debug("Got interrupted");
@@ -197,24 +169,20 @@ int main(void)
 			if(irqStatus.IRQ_RX_DATA_READY)
 			{
 				main_print_debug("data received");
-				SPSGRF_GetRxData(rxdata);
 				state = DECRYPT;
 			}
 			if(irqStatus.IRQ_RX_DATA_DISC)
 			{
-				// do something...
 				state = RECEIVE;
 			}
 			if(irqStatus.IRQ_TX_DATA_SENT)
 			{
 				main_print_debug("Data send!");
-				// do something...
-				state = IDLE;
+				state = RECEIVE;
 			}
 			if(irqStatus.IRQ_AES_END)
 			{
 				main_print_debug("Encryption done");
-				// do something...
 				state = IDLE;
 			}
 		  }
@@ -321,9 +289,9 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 2000;
+  htim2.Init.Prescaler = 24000;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 40000;
+  htim2.Init.Period = 20000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)

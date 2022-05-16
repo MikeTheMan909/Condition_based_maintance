@@ -42,4 +42,5 @@
 "./Lib/Cbm/config.o"
 "./Lib/Comm/comm.o"
 "./Lib/Debug/debug.o"
+"./Lib/Mesh/mesh.o"
 "./Lib/SPSGRF/SPSGRF.o"

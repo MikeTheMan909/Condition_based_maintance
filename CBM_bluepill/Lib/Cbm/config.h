@@ -5,6 +5,7 @@
 
 #include "stdint.h"
 
+
 #define set_flag(r,f) (r |= f)
 // reset flag function: r - register to change, f - flag position
 #define reset_flag(r,f) (r &= ~f)
@@ -20,9 +21,13 @@ struct config {
 	uint8_t key[16];
 };
 extern struct config c;
-uint8_t config();
+struct config config();
 
-#define MY_ADDRESS_CFG		0xAA
-#define GATEWAY_ADDRESS	0xAA
-#define SENSOR_ID 1
+extern uint8_t sensor_id;
+
+#define MY_ADDRESS_CFG	0xAA
+#define GATEWAY_ADDRESS	0x99
+
+
+#define TIMEOUT 100000
 #endif /* INC_CONFIG_H_ */

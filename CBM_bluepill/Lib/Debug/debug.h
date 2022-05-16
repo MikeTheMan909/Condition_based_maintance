@@ -19,7 +19,7 @@
 
 
 #ifdef ENABLE_DEBUG
-#define DEBUG_ENCRYPTION 1
+
 	// Define normal function prototypes
 
 	void print_debug(const char *module, const char *text);

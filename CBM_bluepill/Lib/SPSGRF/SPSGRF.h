@@ -48,10 +48,10 @@
 #define EN_FEC                      S_DISABLE
 #define EN_WHITENING                S_ENABLE
 
-#define EN_FILT_MY_ADDRESS          S_DISABLE
-#define EN_FILT_MULTICAST_ADDRESS   S_DISABLE
-#define EN_FILT_BROADCAST_ADDRESS   S_DISABLE
-#define MY_ADDRESS                  0x44
+#define EN_FILT_MY_ADDRESS          S_ENABLE
+#define EN_FILT_MULTICAST_ADDRESS   S_ENABLE
+#define EN_FILT_BROADCAST_ADDRESS   S_ENABLE
+#define MY_ADDRESS                  0xAA
 #define MULTICAST_ADDRESS           0xEE
 #define BROADCAST_ADDRESS           0xFF
 

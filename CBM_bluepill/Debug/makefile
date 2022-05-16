@@ -10,6 +10,7 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include Lib/SPSGRF/subdir.mk
+-include Lib/Mesh/subdir.mk
 -include Lib/Debug/subdir.mk
 -include Lib/Comm/subdir.mk
 -include Lib/Cbm/subdir.mk

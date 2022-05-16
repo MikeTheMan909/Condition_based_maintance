@@ -29,5 +29,6 @@ Drivers/STM32F1xx_HAL_Driver/Src \
 Lib/Cbm \
 Lib/Comm \
 Lib/Debug \
+Lib/Mesh \
 Lib/SPSGRF \
 
