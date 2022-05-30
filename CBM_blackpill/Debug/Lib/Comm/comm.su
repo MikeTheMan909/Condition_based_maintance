@@ -3,7 +3,7 @@
 ../Lib/Comm/comm.c:98:6:comm_command	56	static
 ../Lib/Comm/comm.c:125:6:comm_request_big	136	static
 ../Lib/Comm/comm.c:157:6:comm_received	56	static
-../Lib/Comm/comm.c:275:6:comm_send	16	static
-../Lib/Comm/comm.c:282:9:comm_encrypt	248	static
-../Lib/Comm/comm.c:346:6:comm_decrypt	432	static
-../Lib/Comm/comm.c:409:6:comm_start	8	static
+../Lib/Comm/comm.c:277:6:comm_send	16	static
+../Lib/Comm/comm.c:284:9:comm_encrypt	248	static
+../Lib/Comm/comm.c:356:6:comm_decrypt	432	static
+../Lib/Comm/comm.c:426:6:comm_start	8	static

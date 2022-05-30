@@ -52,7 +52,7 @@ UART_HandleTypeDef huart1;
 const char *module = "main";
 #define main_print_debug(str) print_debug(module, str);
 #define main_printf_debug(format, ...) printf_debug(module, format, ##__VA_ARGS__);
-enum states state = PREP_DATA;
+enum states state = RECEIVE;
 uint8_t interrupt_flag = 0;
 
 struct config c;
