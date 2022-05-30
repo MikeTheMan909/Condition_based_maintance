@@ -1,0 +1,5 @@
+../Lib/sensor/vibration_math.c:10:6:convert_to_velocity	12296	static
+../Lib/sensor/vibration_math.c:34:6:convert_to_displacement	8	static
+../Lib/sensor/vibration_math.c:47:6:vibration_statistics	16	static
+../Lib/sensor/vibration_math.c:105:6:subtract_mean	24	static
+../Lib/sensor/vibration_math.c:114:6:numerical_integrate	32	static

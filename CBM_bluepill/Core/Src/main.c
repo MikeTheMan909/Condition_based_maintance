@@ -49,7 +49,7 @@ UART_HandleTypeDef huart1;
 const char *module = "main";
 #define main_print_debug(str) print_debug(module, str);
 
-enum states state = RECEIVE;
+enum states state = PREP_DATA;
 uint8_t interrupt_flag = 0;
 
 struct config c;
@@ -130,6 +130,26 @@ int main(void)
   sensor_value.acc.z.rms = 21.327;
   sensor_value.acc.z.peak = 11.231;
   sensor_value.acc.z.crest = 8.12;
+
+  sensor_value.velo.x.rms = 21.32;
+  sensor_value.velo.x.peak = 11.23;
+  sensor_value.velo.x.crest = 8.1;
+  sensor_value.velo.y.rms = 21.324;
+  sensor_value.velo.y.peak = 11.234;
+  sensor_value.velo.y.crest = 8.13;
+  sensor_value.velo.z.rms = 21.327;
+  sensor_value.velo.z.peak = 11.231;
+  sensor_value.velo.z.crest = 8.12;
+
+  sensor_value.disp.x.rms = 21.32;
+  sensor_value.disp.x.peak = 11.23;
+  sensor_value.disp.x.crest = 0;
+  sensor_value.disp.y.rms = 21.324;
+  sensor_value.disp.y.peak = 11.234;
+  sensor_value.disp.y.crest = 0;
+  sensor_value.disp.z.rms = 21.327;
+  sensor_value.disp.z.peak = 11.231;
+  sensor_value.disp.z.crest = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -145,7 +165,7 @@ int main(void)
 		  break;
 	  case ENCRYPT:
 		  comm_encrypt(data, len, enc_data);
-		  state = SEND;
+		  state = DECRYPT;
 		  break;
 	  case SEND:
 		  comm_send(enc_data);

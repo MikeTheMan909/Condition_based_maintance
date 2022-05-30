@@ -1,0 +1,5 @@
+../Lib/sensor/sensor.c:17:9:sensor_setup	32	static
+../Lib/sensor/sensor.c:43:6:sensor_readAcceleroRegister	40	static
+../Lib/sensor/sensor.c:53:7:sensor_readTemperature	32	static
+../Lib/sensor/sensor.c:80:9:accelerometer_sample	6184	static
+../Lib/sensor/sensor.c:141:6:sensor_fillStruct	24	static

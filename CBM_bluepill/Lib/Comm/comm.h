@@ -14,6 +14,7 @@
 #include "Cbm/config.h"
 #include "main.h"
 #include "Mesh/mesh.h"
+#include "stdio.h"
 
 union convert {
 	float t;

@@ -21,7 +21,8 @@
 
 const char *commmod = "comm";
 #define comm_print_debug(str) print_debug(commmod, str)
-
+#define comm_printf_debug(format,...) \
+	printf_debug(commmod, format, ##__VA_ARGS__)
 #ifdef ENABLE_DEBUG
 #define COMM_DEBUG 1
 #endif
@@ -30,17 +31,26 @@ uint8_t gateway_received = 0;
 uint8_t message_send = 0;
 
 void comm_builddata(uint8_t *temp, float *value, uint8_t placement){
+	char tmp[20];
+	char stri[20];
 	union convert f;
 	f.t = *value;
 	int i = 0;
+	printf_debug(commmod,"Value: %f",*value);
+	sprintf(tmp, "hex: ");
 	for(i=0; i<4; i++){
+		sprintf(stri,"%02x",f.b[i]);
+		strcat(tmp, stri);
 		temp[placement + i] = f.b[i];
 	}
+	print_debug(commmod, tmp);
 }
 
 uint8_t comm_request(uint8_t *temp, struct sensor_values sensor_value){
 	//make sensor data ready for send
 	int i;
+	char tmp[150];
+	char chr[300];
 	VECTOR *ptr_data = 0;
 	ptr_data = &sensor_value.acc.x;
 
@@ -51,27 +61,32 @@ uint8_t comm_request(uint8_t *temp, struct sensor_values sensor_value){
 	memcpy(&temp[2], &c.send_flag, 1);
 	comm_builddata(temp,&sensor_value.temperature, 3);
 
-	for(i=0; i<4;i++){
+	for(i=0; i<3;i++){
 		comm_builddata(temp,&ptr_data->rms, 7+(12*i));
 		comm_builddata(temp,&ptr_data->peak, 11+(12*i));
 		comm_builddata(temp,&ptr_data->crest, 15+(12*i));
 		ptr_data++;
 	}
 	ptr_data = &sensor_value.velo.x;
-	for(i=0; i<4;i++){
-		comm_builddata(temp,&ptr_data->rms, 55+(12*i));
-		comm_builddata(temp,&ptr_data->peak, 59+(12*i));
-		comm_builddata(temp,&ptr_data->crest, 63+(12*i));
+	for(i=0; i<3;i++){
+		comm_builddata(temp,&ptr_data->rms, 43+(12*i));
+		comm_builddata(temp,&ptr_data->peak, 47+(12*i));
+		comm_builddata(temp,&ptr_data->crest, 51+(12*i));
 		ptr_data++;
 	}
 	ptr_data = &sensor_value.disp.x;
-	for(i=0; i<4;i++){
-		comm_builddata(temp,&ptr_data->rms, 67+(8*i));
-		comm_builddata(temp,&ptr_data->peak, 71+(8*i));
+	for(i=0; i<3;i++){
+		comm_builddata(temp,&ptr_data->rms, 79+(8*i));
+		comm_builddata(temp,&ptr_data->peak, 83+(8*i));
 		ptr_data++;
 	}
+	for(i=0; i<135;i++){
+		sprintf(tmp,"%02x",temp[i]);
+		strcat(chr, tmp);
+	}
+	comm_printf_debug(chr);
 	message_send = 1;
-	return 13;
+	return 103;
 }
 
 void comm_command(uint8_t cmd, uint8_t address){
@@ -214,32 +229,40 @@ void comm_send(uint8_t * data){
 }
 
 void comm_encrypt(uint8_t *data, uint8_t len ,uint8_t *enc_data){
-	char temp[50];
-	char str[50];
-#ifdef DEBUG_ENCRYPTION
-	memset(temp,0, 50);
-	strcpy(temp, "data:");
-	for(int i = 0; i<len; i++){
-	sprintf(str,"%X", data[i]);
-	strcat(temp,str);
+	uint8_t blocks = 0;
+	uint8_t cur_block =0;
+	uint8_t rest = 0;
+	uint8_t encryption[150];
+	uint8_t *ptr = encryption;
+	if(len > 16){
+		blocks = len/16;
+		while(1){
+			SpiritAesWriteDataIn(data , 16);
+			SpiritAesExecuteEncryption();
+			while(!irqStatus.IRQ_AES_END);
+			SpiritAesReadDataOut(ptr , 16);
+			ptr = ptr +16;
+			cur_block++;
+			if(cur_block > blocks){
+				rest = len%16;
+				if(rest){
+					SpiritAesWriteDataIn(data , rest);
+					SpiritAesExecuteEncryption();
+					while(!irqStatus.IRQ_AES_END);
+					SpiritAesReadDataOut(ptr , 16);
+					ptr = ptr +16;
+					blocks++;
+				}
+				break;
+			}
+		}
+	}else{
+		SpiritAesWriteDataIn(data , len);
+		SpiritAesExecuteEncryption();
+		while(!irqStatus.IRQ_AES_END);
+		SpiritAesReadDataOut(ptr , 16);
 	}
-	comm_print_debug(temp);
-#endif
 
-	SpiritAesWriteDataIn(data , len);
-	SpiritAesExecuteEncryption();
-	while(!irqStatus.IRQ_AES_END);
-	SpiritAesReadDataOut(enc_data , 16);
-
-#ifdef DEBUG_ENCRYPTION
-	memset(temp,0, 50);
-	strcpy(temp, "data:");
-	for(int i = 0; i<16; i++){
-	  sprintf(str,"%X", enc_data[i]);
-	  strcat(temp,str);
-	}
-	comm_print_debug(temp);
-#endif
 }
 
 void comm_decrypt(uint8_t *data){

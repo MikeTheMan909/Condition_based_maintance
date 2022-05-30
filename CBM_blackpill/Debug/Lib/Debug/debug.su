@@ -1,0 +1,2 @@
+../Lib/Debug/debug.c:15:6:print_debug	1016	static
+../Lib/Debug/debug.c:25:6:printf_debug	1028	static
