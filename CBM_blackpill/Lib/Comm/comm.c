@@ -95,24 +95,29 @@ uint8_t comm_request(uint8_t *temp, struct sensor_values sensor_value)
 	return 55;
 }
 
-void comm_command(uint8_t cmd, uint8_t address){
+void comm_command(uint8_t cmd, uint8_t address)
+{
 	uint8_t data[20];
 	uint8_t enc_data[16];
 	int i = 3;
-	if(cmd == GATEWAY_CHECK){
+	if(cmd == GATEWAY_CHECK)
+	{
 		SpiritPktBasicSetDestinationAddress(GATEWAY_ADDRESS);
 		data[0] = sensor_id;
 		data[1] = COMMAND;
-		if(cmd == GATEWAY_CHECK){
+		if(cmd == GATEWAY_CHECK)
+		{
 			data[2] = GATEWAY_CHECK;
 		}
-		if(cmd == SENSORS_CHECK){
+		if(cmd == SENSORS_CHECK)
+		{
 			SpiritPktBasicSetDestinationAddress(BROADCAST_ADDRESS);
 			data[2] = SENSORS_CHECK;
 			data[3] = nodes.gateway_connected;
 			i++;
 		}
-		if(cmd == CONV_TO_CONPOINT){
+		if(cmd == CONV_TO_CONPOINT)
+		{
 			SpiritPktBasicSetDestinationAddress(address);
 			data[2] = CONV_TO_CONPOINT;
 		}
@@ -126,7 +131,8 @@ void comm_request_big(uint16_t X[10], uint16_t Y[10], uint16_t Z[10], uint16_t s
 	uint8_t temp[MAX_BUFFER_LEN];
 	int i = 0;
 	int k = 0;
-	if((size*3) > MAX_BUFFER_LEN){
+	if((size*3) > MAX_BUFFER_LEN)
+	{
 		int send_amount = (size*3)/MAX_BUFFER_LEN;
 		int half;
 		half = (size*3) % i;
@@ -139,11 +145,13 @@ void comm_request_big(uint16_t X[10], uint16_t Y[10], uint16_t Z[10], uint16_t s
 			SPSGRF_StartTx((uint8_t *)temp,(MAX_BUFFER_LEN));
 			HAL_Delay(200);
 		}
-		if(half){
+		if(half)
+		{
 
 		}
 
-	}else{
+	}else
+	{
 	 for(i = 0; i<MAX_BUFFER_LEN/3; i++){
 		 memcpy(&temp[0*i], &X[i],2);
 		 memcpy(&temp[2*i], &Y[i],2);
@@ -297,8 +305,9 @@ uint8_t comm_encrypt(uint8_t *data, uint8_t len ,uint8_t *enc_data)
 			SpiritAesWriteDataIn(data , 16);
 			SpiritAesExecuteEncryption();
 			while(!irqStatus.IRQ_AES_END);
+			irqStatus.IRQ_AES_END = 0;
 			SpiritAesReadDataOut(enc_data , 16);
-
+			irqStatus.IRQ_AES_END = 0;
 			strcpy(temp, "data enc:");
 			for(int i = 0; i<16; i++)
 			{
@@ -318,8 +327,9 @@ uint8_t comm_encrypt(uint8_t *data, uint8_t len ,uint8_t *enc_data)
 					SpiritAesWriteDataIn(data , rest);
 					SpiritAesExecuteEncryption();
 					while(!irqStatus.IRQ_AES_END);
+					irqStatus.IRQ_AES_END = 0;
 					SpiritAesReadDataOut(enc_data , 16);
-
+					irqStatus.IRQ_AES_END = 0;
 					strcpy(temp, "data enc:");
 					for(int i = 0; i<16; i++){
 						sprintf(str,"%02X", enc_data[i]);
@@ -339,7 +349,9 @@ uint8_t comm_encrypt(uint8_t *data, uint8_t len ,uint8_t *enc_data)
 		SpiritAesWriteDataIn(data , len);
 		SpiritAesExecuteEncryption();
 		while(!irqStatus.IRQ_AES_END);
+		irqStatus.IRQ_AES_END = 0;
 		SpiritAesReadDataOut(enc_data , 16);
+		irqStatus.IRQ_AES_END = 0;
 		comm_printf_debug("test %d",len);
 		strcpy(temp, "data enc:");
 		for(int i = 0; i<16; i++)
@@ -376,7 +388,9 @@ void comm_decrypt(uint8_t *data,uint8_t *_data)
 			SpiritAesWriteDataIn(enc_data , 16);
 			SpiritAesDeriveDecKeyExecuteDec();
 			while(!irqStatus.IRQ_AES_END);
+			irqStatus.IRQ_AES_END = 0;
 			SpiritAesReadDataOut(data , 16);
+			irqStatus.IRQ_AES_END = 0;
 			memset(temp,0, 100);
 			strcpy(temp, "data decr:");
 			for(i = 0; i<16; i++)
@@ -396,7 +410,9 @@ void comm_decrypt(uint8_t *data,uint8_t *_data)
 					SpiritAesWriteDataIn(enc_data , rest);
 					SpiritAesDeriveDecKeyExecuteDec();
 					while(!irqStatus.IRQ_AES_END);
+					irqStatus.IRQ_AES_END = 0;
 					SpiritAesReadDataOut(data , 16);
+					irqStatus.IRQ_AES_END = 0;
 					blocks++;
 				}
 				break;
@@ -407,8 +423,9 @@ void comm_decrypt(uint8_t *data,uint8_t *_data)
 		SpiritAesWriteDataIn(enc_data, 16);
 		SpiritAesDeriveDecKeyExecuteDec();
 		while(!irqStatus.IRQ_AES_END);
-
-		SpiritAesReadDataOut(data , 13);
+		irqStatus.IRQ_AES_END = 0;
+		SpiritAesReadDataOut(data , 16);
+		irqStatus.IRQ_AES_END = 0;
 		memset(temp,0, 50);
 		strcpy(temp, "data decr:");
 		for(i = 0; i<16; i++)
